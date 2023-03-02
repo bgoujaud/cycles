@@ -103,7 +103,7 @@ def cycle_heavy_ball_momentum(mu, L, alpha, beta, n, threshold, verbose=1):
     x1 = problem.set_initial_point()
 
     # Set the initial constraint that is the distance between f(x0) and f(x^*)
-    problem.set_initial_condition((x0 - x1) ** 2 >= 1)
+    problem.set_initial_condition((x1 - x0) ** 2 >= 1)
 
     # Run one step of the heavy ball method
     x_new = x1

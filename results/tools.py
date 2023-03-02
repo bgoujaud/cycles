@@ -42,14 +42,14 @@ def get_graphics(method, mu, L):
     x_green = list()
     y_green = list()
     for alpha_max, beta in zip(alphas_lyap, betas_lyap):
-        x_green += list(np.linspace(0, alpha_max, 100))
-        y_green += [beta] * 100
+        x_green += list(np.linspace(0, alpha_max, 500))
+        y_green += [beta] * 500
 
     x_red = list()
     y_red = list()
     for alpha_min, beta in zip(alphas_cycle, betas_cycle):
-        x_red += list(np.linspace(alpha_min, bound(method, L, beta), 100))
-        y_red += [beta] * 100
+        x_red += list(np.linspace(alpha_min, bound(method, L, beta), 500))
+        y_red += [beta] * 500
 
     plt.figure(figsize=(15, 9))
     plt.plot(x_green, y_green, '.g')
@@ -58,4 +58,5 @@ def get_graphics(method, mu, L):
 
 
 if __name__ == "__main__":
-    get_graphics(method="GD", mu=0, L=1)
+    for method in ["HB", "NAG", "GD"]:
+        get_graphics(method=method, mu=0, L=1)
