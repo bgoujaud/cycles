@@ -121,11 +121,11 @@ if __name__ == "__main__":
 
     def run(method, mu):
         if method == "HB":
-            bisection_search_hb(mu=mu, L=1, nb_points=100, precision=10**-2, max_cycle_length=8)
+            bisection_search_hb(mu=mu, L=1, nb_points=200, precision=10**-3, max_cycle_length=8)
         elif method == "NAG":
-            bisection_search_nag(mu=mu, L=1, nb_points=100, precision=10**-2, max_cycle_length=8)
+            bisection_search_nag(mu=mu, L=1, nb_points=200, precision=10**-3, max_cycle_length=8)
         elif method == "GD":
-            bisection_search_gd_inexact(mu=mu, L=1, nb_points=100, precision=10**-2, max_cycle_length=8)
+            bisection_search_gd_inexact(mu=mu, L=1, nb_points=200, precision=10**-3, max_cycle_length=8)
         else:
             raise Exception
 
