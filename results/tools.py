@@ -1,3 +1,4 @@
+import numpy as np
 import matplotlib.pyplot as plt
 
 
@@ -17,18 +18,40 @@ def read_result_file(file_path):
 
 
 def write_result_file(file_path, alphas, betas):
-
     with open(file_path, "w") as f:
-        f.write("alpha\tbeta")
+        f.write("alpha\tbeta\n")
         for alpha, beta in zip(alphas, betas):
-            f.write("{}\t{}".format(alpha, beta))
+            f.write("{}\t{}\n".format(alpha, beta))
+
+
+def bound(method, L, beta):
+    if method == "HB":
+        return 2 * (1 + beta) / L
+    elif method == "NAG":
+        return (1 + 1 / (1 + 2 * beta)) / L
+    elif method == "GD":
+        return 2 / L
+    else:
+        raise Exception
 
 
 def get_graphics(method, mu, L):
     alphas_lyap, betas_lyap = read_result_file(file_path="lyapunov/{}_mu{:.2f}_L{:.0f}.txt".format(method, mu, L))
     alphas_cycle, betas_cycle = read_result_file(file_path="cycles/{}_mu{:.2f}_L{:.0f}.txt".format(method, mu, L))
 
+    x_green = list()
+    y_green = list()
+    for alpha_max, beta in zip(alphas_lyap, betas_lyap):
+        x_green += list(np.linspace(0, alpha_max, 100))
+        y_green += [beta] * 100
+
+    x_red = list()
+    y_red = list()
+    for alpha_min, beta in zip(alphas_cycle, betas_cycle):
+        x_red += list(np.linspace(alpha_min, bound(method, L, beta), 100))
+        y_red += [beta] * 100
+
     plt.figure(figsize=(15, 9))
-    plt.plot(alphas_lyap, betas_lyap, 'g')
-    plt.plot(alphas_cycle, betas_cycle, 'r')
+    plt.plot(x_green, y_green, '.g')
+    plt.plot(x_red, y_red, '.r')
     plt.savefig("figures/{}_mu{:.2f}_L{:.0f}.txt".format(method, mu, L))

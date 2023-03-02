@@ -83,7 +83,7 @@ def bisection_search_gd_inexact(mu, L, nb_points, precision, max_cycle_length):
 
     # alpha is gamma
     alphas_min_cycle = 2 / (L*(1+betas))
-    alphas_max_cycle = np.ones_like(betas)
+    alphas_max_cycle = 2 * np.ones_like(betas) / L
     alphas_cycle = list()
 
     for it in tqdm(range(len(betas))):
