@@ -108,3 +108,25 @@ def bisection_search_gd_inexact(mu, L, nb_points, precision, max_cycle_length):
         alphas_cycle.append(alpha_max_cycle)
 
     write_result_file(file_path="results/cycles/GD_mu{:.2f}_L{:.0f}.txt".format(mu, L), alphas=alphas_cycle, betas=betas)
+
+
+if __name__ == "__main__":
+
+    methods = list()
+    mus = list()
+    for method in ["HB", "NAG", "GD"]:
+        for mu in [0, .01, .1, .2]:
+            methods.append(method)
+            mus.append(mu)
+
+    def run(method, mu):
+        if method == "HB":
+            bisection_search_hb(mu=mu, L=1, nb_points=100, precision=10**-2, max_cycle_length=8)
+        elif method == "NAG":
+            bisection_search_nag(mu=mu, L=1, nb_points=100, precision=10**-2, max_cycle_length=8)
+        elif method == "GD":
+            bisection_search_gd_inexact(mu=mu, L=1, nb_points=100, precision=10**-2, max_cycle_length=8)
+        else:
+            raise Exception
+
+    Parallel(n_jobs=12)(delayed(run)(methods[i], mus[i]) for i in range(12))
