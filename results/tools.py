@@ -54,4 +54,8 @@ def get_graphics(method, mu, L):
     plt.figure(figsize=(15, 9))
     plt.plot(x_green, y_green, '.g')
     plt.plot(x_red, y_red, '.r')
-    plt.savefig("figures/{}_mu{:.2f}_L{:.0f}.txt".format(method, mu, L))
+    plt.savefig("figures/{}_mu{:.2f}_L{:.0f}.png".format(method, mu, L))
+
+
+if __name__ == "__main__":
+    get_graphics(method="GD", mu=0, L=1)
