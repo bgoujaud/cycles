@@ -82,7 +82,7 @@ def bisection_search_gd_inexact(mu, L, nb_points, precision, max_cycle_length):
     betas = np.linspace(0, 1, nb_points, endpoint=False)
 
     # alpha is gamma
-    alphas_min_cycle = 2 / (L*(1+betas))
+    alphas_min_cycle = 1.9 / (L*(1+betas))
     alphas_max_cycle = 2 * np.ones_like(betas) / L
     alphas_cycle = list()
 
