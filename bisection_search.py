@@ -23,7 +23,7 @@ def bisection_search_hb(mu, L, nb_points, precision, max_cycle_length):
     alphas_max_cycle = 2 * (1 + betas) / L
     alphas_cycle = list()
 
-    for it in tqdm(len(betas)):
+    for it in tqdm(range(len(betas))):
 
         beta = betas[it]
         alpha_min_cycle = alphas_min_cycle[it]
@@ -50,10 +50,10 @@ def bisection_search_hb(mu, L, nb_points, precision, max_cycle_length):
 def bisection_search_nag(mu, L, nb_points, precision, max_cycle_length):
     betas = np.linspace(0, 1, nb_points, endpoint=False)
     alphas_min_cycle = np.zeros_like(betas)
-    alphas_max_cycle = (1 + 1 / (1 + beta)) / L
+    alphas_max_cycle = (1 + 1 / (1 + betas)) / L
     alphas_cycle = list()
 
-    for it in tqdm(len(betas)):
+    for it in tqdm(range(len(betas))):
 
         beta = betas[it]
         alpha_min_cycle = alphas_min_cycle[it]
@@ -86,7 +86,7 @@ def bisection_search_gd_inexact(mu, L, nb_points, precision, max_cycle_length):
     alphas_max_cycle = np.ones_like(betas)
     alphas_cycle = list()
 
-    for it in tqdm(len(betas)):
+    for it in tqdm(range(len(betas))):
 
         beta = betas[it]
         alpha_min_cycle = alphas_min_cycle[it]
