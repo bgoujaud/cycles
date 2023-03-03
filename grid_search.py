@@ -3,13 +3,8 @@ from joblib import Parallel, delayed
 import numpy as np
 import matplotlib.pyplot as plt
 
-from heavy_ball.contraction import wc_heavy_ball_momentum
 from heavy_ball.cycles import cycle_heavy_ball_momentum
-
-from nag.contraction import wc_accelerated_gradient_strongly_convex
 from nag.cycles import cycle_accelerated_gradient_strongly_convex
-
-from inexact_gradient_descent.contraction import wc_inexact_gradient_descent
 from inexact_gradient_descent.cycles import cycle_inexact_gradient_descent
 
 

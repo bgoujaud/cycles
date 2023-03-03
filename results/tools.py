@@ -52,11 +52,15 @@ def get_graphics(method, mu, L):
         y_red += [beta] * 500
 
     plt.figure(figsize=(15, 9))
-    plt.plot(x_green, y_green, '.g')
     plt.plot(x_red, y_red, '.r')
+    plt.plot(x_green, y_green, '.g')
     plt.savefig("figures/{}_mu{:.2f}_L{:.0f}.png".format(method, mu, L))
 
 
 if __name__ == "__main__":
     for method in ["HB", "NAG", "GD"]:
-        get_graphics(method=method, mu=0, L=1)
+        for mu in [0., .01, .1, .2]:
+            try:
+                get_graphics(method=method, mu=mu, L=1)
+            except FileNotFoundError:
+                pass
