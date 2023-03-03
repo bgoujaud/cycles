@@ -52,8 +52,8 @@ def get_graphics(method, mu, L):
         y_red += [beta] * 500
 
     plt.figure(figsize=(15, 9))
-    plt.plot(x_red, y_red, '.r')
     plt.plot(x_green, y_green, '.g')
+    plt.plot(x_red, y_red, '.r')
     plt.savefig("figures/{}_mu{:.2f}_L{:.0f}.png".format(method, mu, L))
 
 
