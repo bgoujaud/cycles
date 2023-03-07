@@ -1,12 +1,9 @@
 from tqdm import tqdm
 
-from math import sqrt, inf
+from math import inf
 import numpy as np
 import cvxpy as cp
 import matplotlib.pyplot as plt
-
-from PEPit import PEP
-from PEPit.functions import SmoothStronglyConvexFunction
 
 
 def inner_product(u, v):
@@ -18,7 +15,7 @@ def square(u):
     return inner_product(u, u)
 
 
-def interpolation_i_j(pointi, pointj, mu=.1, L=1):
+def interpolation_i_j(pointi, pointj, mu, L):
     xi, gi, fi = pointi
     xj, gj, fj = pointj
 
@@ -29,22 +26,22 @@ def interpolation_i_j(pointi, pointj, mu=.1, L=1):
     return G, F
 
 
-def interpolation(list_of_points):
+def interpolation(list_of_points, mu, L):
     list_of_matrices = []
     list_of_vectors = []
 
     for i, pointi in enumerate(list_of_points):
         for j, pointj in enumerate(list_of_points):
             if i != j:
-                G, F = interpolation_i_j(pointi, pointj)
+                G, F = interpolation_i_j(pointi, pointj, mu, L)
                 list_of_matrices.append(G)
                 list_of_vectors.append(F)
 
     return list_of_matrices, list_of_vectors
 
 
-def interpolation_combination(list_of_points):
-    list_of_matrices, list_of_vectors = interpolation(list_of_points)
+def interpolation_combination(list_of_points, mu, L):
+    list_of_matrices, list_of_vectors = interpolation(list_of_points, mu, L)
     nb_constraints = len(list_of_matrices)
     dual = cp.Variable((nb_constraints,))
     matrix_combination = cp.sum([dual[i] * list_of_matrices[i] for i in range(nb_constraints)])
@@ -53,7 +50,7 @@ def interpolation_combination(list_of_points):
     return matrix_combination, vector_combination, dual
 
 
-def lyap_hb(beta = .9, gamma = 1, mu=.1, L=1, rho = .999):
+def lyap_hb(beta=.9, gamma=1, mu=.1, L=1, rho=.999):
 
     # Initialize
     x0, g0, x1, g1, g2 = list(np.eye(5))
@@ -68,7 +65,7 @@ def lyap_hb(beta = .9, gamma = 1, mu=.1, L=1, rho = .999):
     # Lyapunov
     G = cp.Variable((4, 4), symmetric=True)
     F = cp.Variable((2,))
-    list_of_cvxpy_constraints = [cp.trace(G) == 1]
+    list_of_cvxpy_constraints = []  # [cp.trace(G) == 1]
 
     VG = np.array([x0 - xs, g0, x1 - xs, g1]).T @ G @ np.array([x0 - xs, g0, x1 - xs, g1])
     VG_plus = np.array([x1 - xs, g1, x2 - xs, g2]).T @ G @ np.array([x1 - xs, g1, x2 - xs, g2])
@@ -78,12 +75,12 @@ def lyap_hb(beta = .9, gamma = 1, mu=.1, L=1, rho = .999):
     # Write problem
     list_of_points = [(xs, gs, fs), (x0, g0, f0), (x1, g1, f1), (x2, g2, f2)]
 
-    matrix_combination, vector_combination, dual = interpolation_combination(list_of_points=list_of_points)
+    matrix_combination, vector_combination, dual = interpolation_combination(list_of_points, mu, L)
     list_of_cvxpy_constraints.append(VG_plus - rho * VG << matrix_combination)
     list_of_cvxpy_constraints.append(VF_plus - rho * VF <= vector_combination)
     list_of_cvxpy_constraints.append(dual >= 0)
 
-    matrix_combination, vector_combination, dual = interpolation_combination(list_of_points=list_of_points)
+    matrix_combination, vector_combination, dual = interpolation_combination(list_of_points, mu, L)
     list_of_cvxpy_constraints.append(- VG_plus << matrix_combination)
     list_of_cvxpy_constraints.append(f2 - fs - VF_plus <= vector_combination)
     list_of_cvxpy_constraints.append(dual >= 0)
