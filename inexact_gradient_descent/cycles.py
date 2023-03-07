@@ -3,7 +3,7 @@ from PEPit.functions import SmoothStronglyConvexFunction
 from PEPit.primitive_steps import inexact_gradient_step
 
 
-def cycle_inexact_gradient_descent(L, mu, gamma, epsilon, n, threshold, verbose=1):
+def cycle_inexact_gradient_descent(L, mu, alpha, beta, n, threshold, verbose=1):
     """
     Consider the convex minimization problem
 
@@ -88,16 +88,16 @@ def cycle_inexact_gradient_descent(L, mu, gamma, epsilon, n, threshold, verbose=
                 Theoretical guarantee:   f(x_n)-f_* <= 0.518917 (f(x_0)-f_*)
 
     """
+    # gamma is alpha
+    # epsilon is beta
+    gamma = alpha
+    epsilon = beta
 
     # Instantiate PEP
     problem = PEP()
 
     # Declare a strongly convex smooth function
     func = problem.declare_function(SmoothStronglyConvexFunction, mu=mu, L=L)
-
-    # Start by defining its unique optimal point xs = x_* and corresponding function value fs = f_*
-    xs = func.stationary_point()
-    fs = func(xs)
 
     # Then define the starting point x0 of the algorithm
     # as well as corresponding inexact gradient and function value g0 and f0

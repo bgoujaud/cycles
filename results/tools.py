@@ -57,10 +57,43 @@ def get_graphics(method, mu, L):
     plt.savefig("figures/{}_mu{:.2f}_L{:.0f}.png".format(method, mu, L))
 
 
+def get_colored_graphics(method, mu, L, max_cycle_length):
+
+    plt.figure(figsize=(15, 9))
+
+    alphas_lyap, betas_lyap = read_result_file(file_path="lyapunov/{}_mu{:.2f}_L{:.0f}.txt".format(method, mu, L))
+    x_green = list()
+    y_green = list()
+    for alpha_max, beta in zip(alphas_lyap, betas_lyap):
+        x_green += list(np.linspace(0, alpha_max, 500))
+        y_green += [beta] * 500
+    plt.plot(x_green, y_green, '.g')
+
+    color_map = plt.get_cmap('OrRd')
+    for K in range(max_cycle_length, 2, -1):
+        try:
+            alphas_cycle, betas_cycle = read_result_file(file_path="cycles/{}_mu{:.2f}_L{:.0f}_K{:.0f}.txt".format(method, mu, L, K))
+            x_red = list()
+            y_red = list()
+            for alpha_min, beta in zip(alphas_cycle, betas_cycle):
+                if alpha_min <= bound(method, L, beta):
+                    x_red += list(np.linspace(alpha_min, bound(method, L, beta), 500))
+                    y_red += [beta] * 500
+            color_scale = (max_cycle_length + 1 - K) / (max_cycle_length - 1)
+            color = color_map((2 + 3 * color_scale) / 5)
+            plt.plot(x_red, y_red, '.', color=color)
+        except FileNotFoundError:
+            pass
+
+    plt.legend(["convergence"] + ["cycle of length {}".format(K) for K in range(max_cycle_length, 2, -1)])
+    plt.savefig("figures/{}_mu{:.2f}_L{:.0f}_colored.png".format(method, mu, L))
+
+
 if __name__ == "__main__":
     for method in ["HB", "NAG", "GD"]:
         for mu in [0., .01, .1, .2]:
             try:
                 get_graphics(method=method, mu=mu, L=1)
+                get_colored_graphics(method=method, mu=mu, L=1, max_cycle_length=12)
             except FileNotFoundError:
                 pass
