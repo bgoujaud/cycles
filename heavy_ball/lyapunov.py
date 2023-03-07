@@ -133,5 +133,5 @@ def conditional_bisection_search(mu, L, nb_points, precision):
 
 
 if __name__ == "__main__":
-    conditional_bisection_search(mu=.1, L=1, nb_points=200, precision=10**-3)
-    conditional_bisection_search(mu=0, L=1, nb_points=200, precision=10**-3)
+    for mu in [0, .01, .1, .2]:
+        conditional_bisection_search(mu=mu, L=1, nb_points=500, precision=10**-3)
