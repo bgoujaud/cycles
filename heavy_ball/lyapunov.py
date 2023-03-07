@@ -50,7 +50,7 @@ def interpolation_combination(list_of_points, mu, L):
     return matrix_combination, vector_combination, dual
 
 
-def lyap_hb(beta=.9, gamma=1, mu=.1, L=1, rho=.999):
+def lyap_hb(beta, gamma, mu, L, rho):
 
     # Initialize
     x0, g0, x1, g1, g2 = list(np.eye(5))
@@ -65,7 +65,7 @@ def lyap_hb(beta=.9, gamma=1, mu=.1, L=1, rho=.999):
     # Lyapunov
     G = cp.Variable((4, 4), symmetric=True)
     F = cp.Variable((2,))
-    list_of_cvxpy_constraints = []  # [cp.trace(G) == 1]
+    list_of_cvxpy_constraints = []
 
     VG = np.array([x0 - xs, g0, x1 - xs, g1]).T @ G @ np.array([x0 - xs, g0, x1 - xs, g1])
     VG_plus = np.array([x1 - xs, g1, x2 - xs, g2]).T @ G @ np.array([x1 - xs, g1, x2 - xs, g2])
@@ -101,9 +101,9 @@ def conditional_bisection_search(mu, L, nb_points, precision):
     else:
         rho = 1
     betas = np.linspace(0, 1, nb_points, endpoint=False)
-    gammas_min_lyap = np.zeros_like(betas) 
+    gammas_min_lyap = np.zeros_like(betas)
     gammas_max_lyap = 2 * (1 + betas) / L
-    
+
     gammas_lyap = list()
 
     for it in tqdm(range(len(betas))):
