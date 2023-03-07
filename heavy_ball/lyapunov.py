@@ -90,7 +90,11 @@ def lyap_hb(beta = .9, gamma = 1, mu=.1, L=1, rho = .999):
 
     # 0 if there exists a Lyapunov
     # inf otherwise
-    value = cp.Problem(objective=cp.Minimize(0), constraints=list_of_cvxpy_constraints).solve()
+    prob = cp.Problem(objective=cp.Minimize(0), constraints=list_of_cvxpy_constraints)
+    try:
+        value = prob.solve(solver="MOSEK")
+    except cp.error.SolverError:
+        value = prob.solve(solver="SCS")
     return value
 
 
@@ -132,4 +136,5 @@ def conditional_bisection_search(mu, L, nb_points, precision):
 
 
 if __name__ == "__main__":
-    conditional_bisection_search(mu=.1, L=1, nb_points=10, precision=.01)
+    conditional_bisection_search(mu=.1, L=1, nb_points=200, precision=10**-3)
+    conditional_bisection_search(mu=0, L=1, nb_points=200, precision=10**-3)
