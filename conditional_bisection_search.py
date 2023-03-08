@@ -1,9 +1,7 @@
 from tqdm import tqdm
 from joblib import Parallel, delayed
 
-from math import log2, ceil
 import numpy as np
-import matplotlib.pyplot as plt
 
 from results.tools import write_result_file
 from heavy_ball.cycles import cycle_heavy_ball_momentum
@@ -12,6 +10,19 @@ from inexact_gradient_descent.cycles import cycle_inexact_gradient_descent
 
 
 def conditional_bisection_search(method, mu, L, nb_points, precision, cycle_length):
+    """
+    Search for cycles of a given length for all parametrization of a given method applied on a given class.
+    Produce a txt file in folder "./results".
+
+    Args:
+        method (str): name of the method
+        mu (float): strong convexity parameter
+        L (float): smoothness parameter
+        nb_points (int): number of bisection search performed (1 per beta value)
+        precision (float): maximal absolute error accepted on alpha
+        cycle_length (int): the length of the searched cycle
+
+    """
     betas = np.linspace(0, 1, nb_points, endpoint=False)
     alphas_min_cycle = np.zeros_like(betas)
     if method == "HB":
@@ -35,9 +46,18 @@ def conditional_bisection_search(method, mu, L, nb_points, precision, cycle_leng
 
         while alpha_max_cycle - alpha_min_cycle > precision:
             alpha = (alpha_min_cycle + alpha_max_cycle) / 2
-            cycle = cycle_search(mu=mu, L=L, alpha=alpha, beta=beta,
-                                 n=cycle_length, threshold=10 ** -3, verbose=-1)
-            if cycle:
+
+            problem = cycle_search(mu=mu, L=L, alpha=alpha, beta=beta, n=cycle_length)
+
+            # Solve the PEP
+            # A small cycle metric means there is a cycle
+            try:
+                pepit_cycle_metric = -problem.solve(verbose=0, solver="MOSEK")
+            except cp.error.SolverError:
+                pepit_cycle_metric = -problem.solve(verbose=0, solver="SCS")
+
+            # Update search interval
+            if pepit_cycle_metric < 10 ** -3:
                 alpha_max_cycle = alpha
             else:
                 alpha_min_cycle = alpha
@@ -60,7 +80,10 @@ if __name__ == "__main__":
                 mus.append(mu)
                 cycle_lengths.append(cycle_length)
 
-    def run(method, mu, cycle_length):
-        conditional_bisection_search(method=method, mu=mu, L=1, nb_points=500, precision=10**-3, cycle_length=cycle_length)
-
-    Parallel(n_jobs=36)(delayed(run)(methods[i], mus[i], cycle_lengths[i]) for i in range(120))
+    Parallel(n_jobs=-1)(delayed(conditional_bisection_search)(method=methods[i],
+                                                              mu=mus[i],
+                                                              L=1,
+                                                              nb_points=500,
+                                                              precision=10**-3,
+                                                              cycle_length=cycle_lengths[i],
+                                                              ) for i in range(120))
