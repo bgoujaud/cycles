@@ -1,5 +1,24 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib as mpl
+from matplotlib.backends.backend_pgf import FigureCanvasPgf
+
+mpl.backend_bases.register_backend("pdf", FigureCanvasPgf)
+size = 19
+mpl.rcParams.update({
+    "pgf.texsystem": "pdflatex",
+    "font.family": "serif",
+    "font.serif": "Times",
+    "text.usetex": True,
+    "pgf.rcfonts": False,
+    "font.size": size,
+    "axes.labelsize": size,
+    "axes.titlesize": size,
+    "figure.titlesize": size,
+    "xtick.labelsize": size,
+    "ytick.labelsize": size,
+    "legend.fontsize": size,
+})
 
 
 def read_result_file(file_path):
@@ -58,7 +77,6 @@ def get_graphics(method, mu, L):
 
 
 def get_colored_graphics(method, mu, L, max_cycle_length):
-
     plt.figure(figsize=(15, 9))
 
     alphas_lyap, betas_lyap = read_result_file(file_path="lyapunov/{}_mu{:.2f}_L{:.0f}.txt".format(method, mu, L))
@@ -67,12 +85,13 @@ def get_colored_graphics(method, mu, L, max_cycle_length):
     for alpha_max, beta in zip(alphas_lyap, betas_lyap):
         x_green += list(np.linspace(0, alpha_max, 500))
         y_green += [beta] * 500
-    plt.plot(x_green, y_green, '.g')
+    plt.plot(x_green, y_green, '.', color="yellowgreen")
 
     color_map = plt.get_cmap('OrRd')
     for K in range(max_cycle_length, 2, -1):
         try:
-            alphas_cycle, betas_cycle = read_result_file(file_path="cycles/{}_mu{:.2f}_L{:.0f}_K{:.0f}.txt".format(method, mu, L, K))
+            alphas_cycle, betas_cycle = read_result_file(
+                file_path="cycles/{}_mu{:.2f}_L{:.0f}_K{:.0f}.txt".format(method, mu, L, K))
             x_red = list()
             y_red = list()
             for alpha_min, beta in zip(alphas_cycle, betas_cycle):
