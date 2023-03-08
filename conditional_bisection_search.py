@@ -75,7 +75,7 @@ if __name__ == "__main__":
     cycle_lengths = list()
     for method in ["HB", "NAG", "GD"]:
         for mu in [0, .01, .1, .2]:
-            for cycle_length in range(3, 13):
+            for cycle_length in range(3, 16):
                 methods.append(method)
                 mus.append(mu)
                 cycle_lengths.append(cycle_length)
@@ -86,4 +86,4 @@ if __name__ == "__main__":
                                                               nb_points=500,
                                                               precision=10**-3,
                                                               cycle_length=cycle_lengths[i],
-                                                              ) for i in range(120))
+                                                              ) for i in range(len(methods)))
