@@ -1,5 +1,6 @@
 tqdm
 joblib
 numpy
+cvxpy
 matplotlib
 pepit

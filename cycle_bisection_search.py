@@ -67,3 +67,23 @@ def cycle_bisection_search(method, mu, L, nb_points, precision, cycle_length):
 
     write_result_file(file_path="results/cycles/{}_mu{:.2f}_L{:.0f}_K{:.0f}.txt".format(method, mu, L, cycle_length),
                       alphas=alphas_cycle, betas=betas)
+
+
+if __name__ == "__main__":
+    methods = list()
+    mus = list()
+    cycle_lengths = list()
+    for method in ["HB", "NAG", "GD"]:
+        for mu in [0, .01, .1, .2]:
+            for cycle_length in range(3, 16):
+                methods.append(method)
+                mus.append(mu)
+                cycle_lengths.append(cycle_length)
+
+    Parallel(n_jobs=-1)(delayed(cycle_bisection_search)(method=methods[i],
+                                                        mu=mus[i],
+                                                        L=1,
+                                                        nb_points=500,
+                                                        precision=10 ** -3,
+                                                        cycle_length=cycle_lengths[i],
+                                                        ) for i in range(len(methods)))

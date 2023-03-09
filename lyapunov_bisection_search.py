@@ -44,3 +44,20 @@ def lyapunov_bisection_search(method, mu, L, nb_points, precision, rho=1):
 
     write_result_file(file_path="results/lyapunov/{}_mu{:.2f}_L{:.0f}.txt".format(method, mu, L),
                       alphas=gammas_lyap, betas=betas)
+
+
+if __name__ == "__main__":
+    methods = list()
+    mus = list()
+    for method in ["HB", "NAG", "GD"]:
+        for mu in [0, .01, .1, .2]:
+            methods.append(method)
+            mus.append(mu)
+
+    Parallel(n_jobs=-1)(delayed(lyapunov_bisection_search)(method=methods[i],
+                                                           mu=mus[i],
+                                                           L=1,
+                                                           nb_points=500,
+                                                           precision=10 ** -3,
+                                                           rho=1,
+                                                           ) for i in range(len(methods)))
