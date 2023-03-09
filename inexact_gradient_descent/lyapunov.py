@@ -1,20 +1,20 @@
 import numpy as np
 import cvxpy as cp
 
-from tools.interpolation_conditions import interpolation_combination
+from tools.interpolation_conditions import square, interpolation_combination
 
 
-def lyapunov_heavy_ball_momentum(beta, gamma, mu, L, rho):
+def lyapunov_inexact_gradient_descent(beta, gamma, mu, L, rho):
 
     # Initialize
-    x0, g0, x1, g1, g2 = list(np.eye(5))
-    xs = np.zeros(5)
-    gs = np.zeros(5)
+    x0, g0, x1, g1, g2, d1 = list(np.eye(6))
+    xs = np.zeros(6)
+    gs = np.zeros(6)
     f0, f1, f2 = list(np.eye(3))
     fs = np.zeros(3)
 
     # Run algorithm
-    x2 = x1 + beta * (x1 - x0) - gamma * g1
+    x2 = x1 - gamma * d1
 
     # Lyapunov
     G = cp.Variable((4, 4), symmetric=True)
@@ -30,12 +30,15 @@ def lyapunov_heavy_ball_momentum(beta, gamma, mu, L, rho):
     list_of_points = [(xs, gs, fs), (x0, g0, f0), (x1, g1, f1), (x2, g2, f2)]
 
     matrix_combination, vector_combination, dual = interpolation_combination(list_of_points, mu, L)
-    list_of_cvxpy_constraints.append(VG_plus - rho * VG << matrix_combination)
+    supplement_matrix = square(d1 - g1) - beta ** 2 * square(g1)
+    supplement_dual = cp.Variable((1,))
+    list_of_cvxpy_constraints.append(VG_plus - rho * VG << matrix_combination + supplement_dual * supplement_matrix)
     list_of_cvxpy_constraints.append(VF_plus - rho * VF <= vector_combination)
     list_of_cvxpy_constraints.append(dual >= 0)
 
     matrix_combination, vector_combination, dual = interpolation_combination(list_of_points, mu, L)
-    list_of_cvxpy_constraints.append(- VG_plus << matrix_combination)
+    supplement_dual = cp.Variable((1,))
+    list_of_cvxpy_constraints.append(- VG_plus << matrix_combination + supplement_dual * supplement_matrix)
     list_of_cvxpy_constraints.append(f2 - fs - VF_plus <= vector_combination)
     list_of_cvxpy_constraints.append(dual >= 0)
 

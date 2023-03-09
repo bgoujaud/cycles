@@ -2,14 +2,15 @@ from tqdm import tqdm
 from joblib import Parallel, delayed
 
 import numpy as np
+import cvxpy as cp
 
-from results.tools import write_result_file
+from tools.file_management import write_result_file
 from heavy_ball.cycles import cycle_heavy_ball_momentum
 from nag.cycles import cycle_accelerated_gradient_strongly_convex
 from inexact_gradient_descent.cycles import cycle_inexact_gradient_descent
 
 
-def conditional_bisection_search(method, mu, L, nb_points, precision, cycle_length):
+def cycle_bisection_search(method, mu, L, nb_points, precision, cycle_length):
     """
     Search for cycles of a given length for all parametrization of a given method applied on a given class.
     Produce a txt file in folder "./results".
@@ -66,24 +67,3 @@ def conditional_bisection_search(method, mu, L, nb_points, precision, cycle_leng
 
     write_result_file(file_path="results/cycles/{}_mu{:.2f}_L{:.0f}_K{:.0f}.txt".format(method, mu, L, cycle_length),
                       alphas=alphas_cycle, betas=betas)
-
-
-if __name__ == "__main__":
-
-    methods = list()
-    mus = list()
-    cycle_lengths = list()
-    for method in ["HB", "NAG", "GD"]:
-        for mu in [0, .01, .1, .2]:
-            for cycle_length in range(3, 16):
-                methods.append(method)
-                mus.append(mu)
-                cycle_lengths.append(cycle_length)
-
-    Parallel(n_jobs=-1)(delayed(conditional_bisection_search)(method=methods[i],
-                                                              mu=mus[i],
-                                                              L=1,
-                                                              nb_points=500,
-                                                              precision=10**-3,
-                                                              cycle_length=cycle_lengths[i],
-                                                              ) for i in range(len(methods)))
