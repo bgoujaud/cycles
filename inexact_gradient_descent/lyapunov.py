@@ -29,14 +29,14 @@ def lyapunov_inexact_gradient_descent(beta, gamma, mu, L, rho):
     # Write problem
     list_of_points = [(xs, gs, fs), (x0, g0, f0), (x1, g1, f1), (x2, g2, f2)]
 
-    matrix_combination, vector_combination, dual = interpolation_combination(list_of_points, mu, L)
+    matrix_combination, vector_combination, dual = interpolation_combination(list_of_points, mu, L, function_class="smooth strongly convex")
     supplement_matrix = square(d1 - g1) - beta ** 2 * square(g1)
     supplement_dual = cp.Variable((1,))
     list_of_cvxpy_constraints.append(VG_plus - rho * VG << matrix_combination + supplement_dual * supplement_matrix)
     list_of_cvxpy_constraints.append(VF_plus - rho * VF <= vector_combination)
     list_of_cvxpy_constraints.append(dual >= 0)
 
-    matrix_combination, vector_combination, dual = interpolation_combination(list_of_points, mu, L)
+    matrix_combination, vector_combination, dual = interpolation_combination(list_of_points, mu, L, function_class="smooth strongly convex")
     supplement_dual = cp.Variable((1,))
     list_of_cvxpy_constraints.append(- VG_plus << matrix_combination + supplement_dual * supplement_matrix)
     list_of_cvxpy_constraints.append(f2 - fs - VF_plus <= vector_combination)

@@ -10,7 +10,7 @@ def square(u):
     return inner_product(u, u)
 
 
-def interpolation_i_j(pointi, pointj, mu, L):
+def smooth_strongly_convex_interpolation_i_j(pointi, pointj, mu, L):
     xi, gi, fi = pointi
     xj, gj, fj = pointj
 
@@ -21,22 +21,51 @@ def interpolation_i_j(pointi, pointj, mu, L):
     return G, F
 
 
-def interpolation(list_of_points, mu, L):
+def lipschitz_operator_interpolation_i_j(pointi, pointj, L):
+    xi, gi = pointi
+    xj, gj = pointj
+
+    G = square(gi - gj) - L**2 * square(xi - xj)
+    F = 0
+
+    return G, F
+
+
+def strongly_monotone_operator_interpolation_i_j(pointi, pointj, mu):
+    xi, gi = pointi
+    xj, gj = pointj
+
+    G = mu * square(xi - xj) - inner_product(gi-gj, xi-xj)
+    F = 0
+
+    return G, F
+
+
+def interpolation(list_of_points, mu, L, function_class):
     list_of_matrices = []
     list_of_vectors = []
 
     for i, pointi in enumerate(list_of_points):
         for j, pointj in enumerate(list_of_points):
             if i != j:
-                G, F = interpolation_i_j(pointi, pointj, mu, L)
-                list_of_matrices.append(G)
-                list_of_vectors.append(F)
+                if function_class == "smooth strongly convex":
+                    G, F = smooth_strongly_convex_interpolation_i_j(pointi, pointj, mu, L)
+                    list_of_matrices.append(G)
+                    list_of_vectors.append(F)
+                elif function_class == "lipschitz strongly monotone operator":
+                    G, F = lipschitz_operator_interpolation_i_j(pointi, pointj, L)
+                    list_of_matrices.append(G)
+                    list_of_vectors.append(F)
+
+                    G, F = strongly_monotone_operator_interpolation_i_j(pointi, pointj, mu)
+                    list_of_matrices.append(G)
+                    list_of_vectors.append(F)
 
     return list_of_matrices, list_of_vectors
 
 
-def interpolation_combination(list_of_points, mu, L):
-    list_of_matrices, list_of_vectors = interpolation(list_of_points, mu, L)
+def interpolation_combination(list_of_points, mu, L, function_class):
+    list_of_matrices, list_of_vectors = interpolation(list_of_points, mu, L, function_class)
     nb_constraints = len(list_of_matrices)
     dual = cp.Variable((nb_constraints,))
     matrix_combination = cp.sum([dual[i] * list_of_matrices[i] for i in range(nb_constraints)])

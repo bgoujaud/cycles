@@ -8,6 +8,7 @@ from tools.file_management import write_result_file
 from heavy_ball.lyapunov import lyapunov_heavy_ball_momentum
 from nag.lyapunov import lyapunov_accelerated_gradient_strongly_convex
 from inexact_gradient_descent.lyapunov import lyapunov_inexact_gradient_descent
+from douglas_rachford.lyapunov import lyapunov_douglas_rachford
 
 
 def lyapunov_bisection_search(method, mu, L, nb_points, precision, rho=1):
@@ -22,6 +23,9 @@ def lyapunov_bisection_search(method, mu, L, nb_points, precision, rho=1):
     elif method == "GD":
         gammas_max_lyap = 2 * np.ones_like(betas) / L
         lyapunov_search = lyapunov_inexact_gradient_descent
+    elif method == "DR":
+        gammas_max_lyap = 2 * np.ones_like(betas) / L
+        lyapunov_search = lyapunov_douglas_rachford
     else:
         raise ValueError
     gammas_lyap = list()
@@ -49,7 +53,7 @@ def lyapunov_bisection_search(method, mu, L, nb_points, precision, rho=1):
 if __name__ == "__main__":
     methods = list()
     mus = list()
-    for method in ["HB", "NAG", "GD"]:
+    for method in ["HB", "NAG", "GD", "DR"]:
         for mu in [0, .01, .1, .2]:
             methods.append(method)
             mus.append(mu)

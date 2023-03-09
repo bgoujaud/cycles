@@ -6,7 +6,7 @@ from tools.file_management import get_colored_graphics
 
 methods = list()
 mus = list()
-for method in ["HB", "NAG", "GD"]:
+for method in ["HB", "NAG", "GD", "DR"]:
     for mu in [0, .01, .1, .2]:
         methods.append(method)
         mus.append(mu)
@@ -22,7 +22,7 @@ Parallel(n_jobs=-1)(delayed(lyapunov_bisection_search)(method=methods[i],
 methods = list()
 mus = list()
 cycle_lengths = list()
-for method in ["HB", "NAG", "GD"]:
+for method in ["HB", "NAG", "GD", "DR"]:
     for mu in [0, .01, .1, .2]:
         for cycle_length in range(3, 16):
             methods.append(method)
@@ -37,9 +37,9 @@ Parallel(n_jobs=-1)(delayed(cycle_bisection_search)(method=methods[i],
                                                     cycle_length=cycle_lengths[i],
                                                     ) for i in range(len(methods)))
 
-for method in ["HB", "NAG", "GD"]:
+for method in ["HB", "NAG", "GD", "DR"]:
     for mu in [0., .01, .1, .2]:
         try:
-            get_colored_graphics(method=method, mu=mu, L=1, max_cycle_length=12)
+            get_colored_graphics(method=method, mu=mu, L=1, max_cycle_length=15)
         except FileNotFoundError:
             pass
