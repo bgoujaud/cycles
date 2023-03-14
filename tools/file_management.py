@@ -93,7 +93,18 @@ def get_colored_graphics(method, mu, L, max_cycle_length, folder="results/"):
         except FileNotFoundError:
             pass
 
-    plt.legend(legends, loc="lower right")
+    if method == "GD":
+        best_loc = "lower left"
+    elif method == "HB":
+        best_loc = "lower right"
+    elif method == "NAG":
+        best_loc = "upper right"
+    elif method == "TOS":
+        best_loc = "upper right"
+    else:
+        raise ValueError
+
+    plt.legend(legends, loc=best_loc)
     plt.savefig(folder + "figures/{}_mu{:.2f}_L{:.0f}_colored.png".format(method, mu, L))
 
 
