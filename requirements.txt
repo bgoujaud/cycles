@@ -3,4 +3,5 @@ joblib
 numpy
 cvxpy
 matplotlib
+scienceplots
 pepit
