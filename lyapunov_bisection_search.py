@@ -57,8 +57,8 @@ def lyapunov_bisection_search(method, mu, L, nb_points, precision, rho=1):
 if __name__ == "__main__":
     methods = list()
     mus = list()
-    for method in ["HB", "NAG", "GD", "DR", "TOS"]:
-        for mu in [0, .01, .1, .2]:
+    for method in ["HB", "NAG", "GD", "TOS"]:
+        for mu in [0, .01, .1]:
             methods.append(method)
             mus.append(mu)
 

@@ -9,7 +9,7 @@ def run_all(list_algos, nb_points, precision, max_cycle_length):
     methods = list()
     mus = list()
     for method in list_algos:
-        for mu in [0, .01, .1, .2]:
+        for mu in [0, .01, .1]:
             methods.append(method)
             mus.append(mu)
 
@@ -25,7 +25,7 @@ def run_all(list_algos, nb_points, precision, max_cycle_length):
     mus = list()
     cycle_lengths = list()
     for method in list_algos:
-        for mu in [0, .01, .1, .2]:
+        for mu in [0, .01, .1]:
             for cycle_length in range(3, max_cycle_length + 1):
                 methods.append(method)
                 mus.append(mu)
@@ -40,7 +40,7 @@ def run_all(list_algos, nb_points, precision, max_cycle_length):
                                                         ) for i in range(len(methods)))
 
     for method in list_algos:
-        for mu in [0., .01, .1, .2]:
+        for mu in [0., .01, .1]:
             try:
                 get_colored_graphics(method=method, mu=mu, L=1, max_cycle_length=max_cycle_length)
             except FileNotFoundError:
@@ -49,4 +49,4 @@ def run_all(list_algos, nb_points, precision, max_cycle_length):
 
 if __name__ == "__main__":
 
-    run_all(list_algos=["HB", "NAG", "GD", "DR", "TOS"], nb_points=500, precision=10**-4, max_cycle_length=20)
+    run_all(list_algos=["HB", "NAG", "GD", "TOS"], nb_points=500, precision=10**-4, max_cycle_length=25)

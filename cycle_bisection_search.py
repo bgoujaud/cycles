@@ -83,9 +83,9 @@ if __name__ == "__main__":
     methods = list()
     mus = list()
     cycle_lengths = list()
-    for method in ["HB", "NAG", "GD", "DR", "TOS"]:
-        for mu in [0, .01, .1, .2]:
-            for cycle_length in range(3, 20 + 1):
+    for method in ["HB", "NAG", "GD", "TOS"]:
+        for mu in [0, .01, .1]:
+            for cycle_length in range(3, 25 + 1):
                 methods.append(method)
                 mus.append(mu)
                 cycle_lengths.append(cycle_length)
