@@ -8,6 +8,8 @@ from tools.file_management import write_result_file
 from heavy_ball.cycles import cycle_heavy_ball_momentum
 from nag.cycles import cycle_accelerated_gradient_strongly_convex
 from inexact_gradient_descent.cycles import cycle_inexact_gradient_descent
+from douglas_rachford.cycles import cycle_douglas_rachford_splitting
+from three_operator_splitting.cycles import cycle_three_operator_splitting
 
 
 def cycle_bisection_search(method, mu, L, nb_points, precision, cycle_length):
@@ -35,6 +37,12 @@ def cycle_bisection_search(method, mu, L, nb_points, precision, cycle_length):
     elif method == "GD":
         alphas_max_cycle = 2 * np.ones_like(betas) / L
         cycle_search = cycle_inexact_gradient_descent
+    elif method == "DR":
+        alphas_max_cycle = 2 * np.ones_like(betas) / L
+        cycle_search = cycle_douglas_rachford_splitting
+    elif method == "TOS":
+        alphas_max_cycle = 2 * np.ones_like(betas) / L
+        cycle_search = cycle_three_operator_splitting
     else:
         raise ValueError
     alphas_cycle = list()
@@ -73,9 +81,9 @@ if __name__ == "__main__":
     methods = list()
     mus = list()
     cycle_lengths = list()
-    for method in ["HB", "NAG", "GD", "DR"]:
+    for method in ["HB", "NAG", "GD", "DR", "TOS"]:
         for mu in [0, .01, .1, .2]:
-            for cycle_length in range(3, 16):
+            for cycle_length in range(3, 25):
                 methods.append(method)
                 mus.append(mu)
                 cycle_lengths.append(cycle_length)

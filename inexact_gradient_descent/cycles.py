@@ -35,7 +35,7 @@ def cycle_inexact_gradient_descent(L, mu, alpha, beta, n):
     x1, dx, fx = inexact_gradient_step(x0, func, gamma=gamma, epsilon=epsilon, notion='relative')
 
     # Set the initial constraint that is the distance between f0 and f_*
-    problem.set_initial_condition((x1 - x0)**2 >= 1)
+    problem.set_initial_condition((x1 - x0) ** 2 >= 1)
 
     # Run n steps of the inexact gradient method
     x = x1

@@ -13,8 +13,13 @@ def lyapunov_douglas_rachford(beta, gamma, mu, L, rho):
     Bs = - As
 
     # Run algorithm
+    # y1 = J_{gamma A} (2 x1 - w0)
     x1 = y1 + gamma * Ay1 + gamma * Bx1
+
+    # x1 = J_{gamma B} (w0)
     w0 = x1 + gamma * Bx1
+
+    # w1 = w0 - beta (x1 - y1)
     w1 = w0 - beta * (x1 - y1)
 
     # Lyapunov
@@ -29,13 +34,13 @@ def lyapunov_douglas_rachford(beta, gamma, mu, L, rho):
     list_of_points_B = [(ws, Bs, 0), (x0, Bx0, 0), (x1, Bx1, 0)]
 
     matrix_combination1, _, dual1 = interpolation_combination(list_of_points_A, 0, L, function_class="lipschitz strongly monotone operator")
-    matrix_combination2, _, dual2 = interpolation_combination(list_of_points_B, mu, inf, function_class="lipschitz strongly monotone operator")
+    matrix_combination2, _, dual2 = interpolation_combination(list_of_points_B, mu, inf, function_class="strongly monotone operator")
     list_of_cvxpy_constraints.append(VG_plus - rho * VG << matrix_combination1 + matrix_combination2)
     list_of_cvxpy_constraints.append(dual1 >= 0)
     list_of_cvxpy_constraints.append(dual2 >= 0)
 
     matrix_combination1, _, dual1 = interpolation_combination(list_of_points_A, 0, L, function_class="lipschitz strongly monotone operator")
-    matrix_combination2, _, dual2 = interpolation_combination(list_of_points_B, mu, inf, function_class="lipschitz strongly monotone operator")
+    matrix_combination2, _, dual2 = interpolation_combination(list_of_points_B, mu, inf, function_class="strongly monotone operator")
     list_of_cvxpy_constraints.append(square(w1 - ws) - VG_plus << matrix_combination1 + matrix_combination2)
     list_of_cvxpy_constraints.append(dual1 >= 0)
     list_of_cvxpy_constraints.append(dual2 >= 0)

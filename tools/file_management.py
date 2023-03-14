@@ -50,6 +50,10 @@ def bound(method, L, beta):
         return (1 + 1 / (1 + 2 * beta)) / L
     elif method == "GD":
         return 2 / L
+    elif method == "DR":
+        return 2 * (1 + beta) / L
+    elif method == "TOS":
+        return 2 * (1 + beta) / L
     else:
         raise Exception
 
@@ -87,9 +91,9 @@ def get_colored_graphics(method, mu, L, max_cycle_length, folder="results/"):
 
 
 if __name__ == "__main__":
-    for method in ["HB", "NAG", "GD", "DR"]:
+    for method in ["HB", "NAG", "GD", "DR", "TOS"]:
         for mu in [0., .01, .1, .2]:
             try:
-                get_colored_graphics(method=method, mu=mu, L=1, max_cycle_length=15, folder="../results/")
+                get_colored_graphics(method=method, mu=mu, L=1, max_cycle_length=25, folder="../results/")
             except FileNotFoundError:
                 pass

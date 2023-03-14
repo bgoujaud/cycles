@@ -9,6 +9,7 @@ from heavy_ball.lyapunov import lyapunov_heavy_ball_momentum
 from nag.lyapunov import lyapunov_accelerated_gradient_strongly_convex
 from inexact_gradient_descent.lyapunov import lyapunov_inexact_gradient_descent
 from douglas_rachford.lyapunov import lyapunov_douglas_rachford
+from three_operator_splitting.lyapunov import lyapunov_three_operator_splitting
 
 
 def lyapunov_bisection_search(method, mu, L, nb_points, precision, rho=1):
@@ -26,6 +27,9 @@ def lyapunov_bisection_search(method, mu, L, nb_points, precision, rho=1):
     elif method == "DR":
         gammas_max_lyap = 2 * np.ones_like(betas) / L
         lyapunov_search = lyapunov_douglas_rachford
+    elif method == "TOS":
+        gammas_max_lyap = 2 * np.ones_like(betas) / L
+        lyapunov_search = lyapunov_three_operator_splitting
     else:
         raise ValueError
     gammas_lyap = list()
@@ -44,7 +48,7 @@ def lyapunov_bisection_search(method, mu, L, nb_points, precision, rho=1):
             else:
                 gamma_max_lyap = gamma
 
-        gammas_lyap.append(gamma_max_lyap)
+        gammas_lyap.append(gamma_min_lyap)
 
     write_result_file(file_path="results/lyapunov/{}_mu{:.2f}_L{:.0f}.txt".format(method, mu, L),
                       alphas=gammas_lyap, betas=betas)
@@ -53,7 +57,7 @@ def lyapunov_bisection_search(method, mu, L, nb_points, precision, rho=1):
 if __name__ == "__main__":
     methods = list()
     mus = list()
-    for method in ["HB", "NAG", "GD", "DR"]:
+    for method in ["HB", "NAG", "GD", "DR", "TOS"]:
         for mu in [0, .01, .1, .2]:
             methods.append(method)
             mus.append(mu)

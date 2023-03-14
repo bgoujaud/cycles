@@ -1,3 +1,4 @@
+from math import inf
 import cvxpy as cp
 
 
@@ -22,20 +23,30 @@ def smooth_strongly_convex_interpolation_i_j(pointi, pointj, mu, L):
 
 
 def lipschitz_operator_interpolation_i_j(pointi, pointj, L):
-    xi, gi = pointi
-    xj, gj = pointj
+    xi, gi, _ = pointi
+    xj, gj, _ = pointj
 
-    G = square(gi - gj) - L**2 * square(xi - xj)
+    G = square(gi - gj) - L ** 2 * square(xi - xj)
     F = 0
 
     return G, F
 
 
 def strongly_monotone_operator_interpolation_i_j(pointi, pointj, mu):
-    xi, gi = pointi
-    xj, gj = pointj
+    xi, gi, _ = pointi
+    xj, gj, _ = pointj
 
-    G = mu * square(xi - xj) - inner_product(gi-gj, xi-xj)
+    G = mu * square(xi - xj) - inner_product(gi - gj, xi - xj)
+    F = 0
+
+    return G, F
+
+
+def cocoercive_operator_interpolation_i_j(pointi, pointj, L):
+    xi, gi, _ = pointi
+    xj, gj, _ = pointj
+
+    G = square(gi - gj) - L * inner_product(xi - xj, gi - gj)
     F = 0
 
     return G, F
@@ -58,6 +69,18 @@ def interpolation(list_of_points, mu, L, function_class):
                     list_of_vectors.append(F)
 
                     G, F = strongly_monotone_operator_interpolation_i_j(pointi, pointj, mu)
+                    list_of_matrices.append(G)
+                    list_of_vectors.append(F)
+
+                elif function_class == "strongly monotone operator":
+                    assert L == inf
+                    G, F = strongly_monotone_operator_interpolation_i_j(pointi, pointj, mu)
+                    list_of_matrices.append(G)
+                    list_of_vectors.append(F)
+
+                elif function_class == "cocoercive operator":
+                    assert mu == 0
+                    G, F = cocoercive_operator_interpolation_i_j(pointi, pointj, L)
                     list_of_matrices.append(G)
                     list_of_vectors.append(F)
 
