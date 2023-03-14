@@ -1,24 +1,27 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib as mpl
-from matplotlib.backends.backend_pgf import FigureCanvasPgf
+# import matplotlib as mpl
+# from matplotlib.backends.backend_pgf import FigureCanvasPgf
+#
+# mpl.backend_bases.register_backend("pdf", FigureCanvasPgf)
+# size = 19
+# mpl.rcParams.update({
+#     "pgf.texsystem": "pdflatex",
+#     "font.family": "serif",
+#     "font.serif": "Times",
+#     "text.usetex": True,
+#     "pgf.rcfonts": False,
+#     "font.size": size,
+#     "axes.labelsize": size,
+#     "axes.titlesize": size,
+#     "figure.titlesize": size,
+#     "xtick.labelsize": size,
+#     "ytick.labelsize": size,
+#     "legend.fontsize": size,
+# })
+import scienceplots
+plt.style.use('science')
 
-mpl.backend_bases.register_backend("pdf", FigureCanvasPgf)
-size = 19
-mpl.rcParams.update({
-    "pgf.texsystem": "pdflatex",
-    "font.family": "serif",
-    "font.serif": "Times",
-    "text.usetex": True,
-    "pgf.rcfonts": False,
-    "font.size": size,
-    "axes.labelsize": size,
-    "axes.titlesize": size,
-    "figure.titlesize": size,
-    "xtick.labelsize": size,
-    "ytick.labelsize": size,
-    "legend.fontsize": size,
-})
 
 
 def read_result_file(file_path):
@@ -70,6 +73,7 @@ def get_colored_graphics(method, mu, L, max_cycle_length, folder="results/"):
         x_green += list(np.linspace(0, gamma_max, 500))
         y_green += [beta] * 500
     plt.plot(x_green, y_green, '.', color="yellowgreen")
+    legends = ["convergence"]
 
     color_map = plt.get_cmap('OrRd')
     for K in range(max_cycle_length, 2, -1):
@@ -85,10 +89,11 @@ def get_colored_graphics(method, mu, L, max_cycle_length, folder="results/"):
             color_scale = (max_cycle_length + 1 - K) / (max_cycle_length - 1)
             color = color_map((2 + 3 * color_scale) / 5)
             plt.plot(x_red, y_red, '.', color=color)
+            legends.append("cycle of length {}".format(K))
         except FileNotFoundError:
             pass
 
-    plt.legend(["convergence"] + ["cycle of length {}".format(K) for K in range(max_cycle_length, 2, -1)])
+    plt.legend(legends, loc="lower right")
     plt.savefig(folder + "figures/{}_mu{:.2f}_L{:.0f}_colored.png".format(method, mu, L))
 
 
