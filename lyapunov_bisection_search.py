@@ -13,7 +13,7 @@ from three_operator_splitting.lyapunov import lyapunov_three_operator_splitting
 
 
 def lyapunov_bisection_search(method, mu, L, nb_points, precision, rho=1):
-    betas = np.linspace(0, 1, nb_points, endpoint=False)
+    betas = np.linspace(0, 1, nb_points, endpoint=False)[1:]
     gammas_min_lyap = np.zeros_like(betas)
     if method == "HB":
         gammas_max_lyap = 2 * (1 + betas) / L

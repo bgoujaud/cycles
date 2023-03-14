@@ -26,7 +26,7 @@ def cycle_bisection_search(method, mu, L, nb_points, precision, cycle_length):
         cycle_length (int): the length of the searched cycle
 
     """
-    betas = np.linspace(0, 1, nb_points, endpoint=False)
+    betas = np.linspace(0, 1, nb_points, endpoint=False)[1:]
     alphas_min_cycle = np.zeros_like(betas)
     if method == "HB":
         alphas_max_cycle = 2 * (1 + betas) / L
