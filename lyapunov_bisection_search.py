@@ -66,6 +66,6 @@ if __name__ == "__main__":
                                                            mu=mus[i],
                                                            L=1,
                                                            nb_points=500,
-                                                           precision=10 ** -3,
+                                                           precision=10 ** -4,
                                                            rho=1,
                                                            ) for i in range(len(methods)))
