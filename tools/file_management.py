@@ -51,9 +51,11 @@ def bound(method, L, beta):
     elif method == "GD":
         return 2 / L
     elif method == "DR":
-        return 2 * (1 + beta) / L
+        # Set by default, not even clear that there is cycle in 2 / L
+        return 2 / L
     elif method == "TOS":
-        return 2 * (1 + beta) / L
+        # Set by default, not even clear that there is cycle in 2 / L
+        return 2 / L / beta
     else:
         raise Exception
 

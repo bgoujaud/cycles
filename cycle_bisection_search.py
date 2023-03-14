@@ -38,10 +38,12 @@ def cycle_bisection_search(method, mu, L, nb_points, precision, cycle_length):
         gammas_max_cycle = 2 * np.ones_like(betas) / L
         cycle_search = cycle_inexact_gradient_descent
     elif method == "DR":
+        # Here we set a gamma by default, but it is not even clear that there is cycles in 2/L
         gammas_max_cycle = 2 * np.ones_like(betas) / L
         cycle_search = cycle_douglas_rachford_splitting
     elif method == "TOS":
-        gammas_max_cycle = 2 * np.ones_like(betas) / L
+        # Here we set a gamma by default, but it is not even clear that there is cycles in 2/L
+        gammas_max_cycle = 2 / L / betas
         cycle_search = cycle_three_operator_splitting
     else:
         raise ValueError

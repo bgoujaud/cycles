@@ -5,7 +5,7 @@ import cvxpy as cp
 from tools.interpolation_conditions import square, interpolation_combination
 
 
-def lyapunov_three_operator_splitting(beta, gamma, mu, L, rho):
+def lyapunov_three_operator_splitting(beta, gamma, mu, L, rho, alpha=1):
     # Initialize
     x0, y0, y1, Ay1, Bx1, As, Bs, Ay0, Bx0, gx0, gx1 = list(np.eye(11))
     ws = np.zeros(11)
@@ -14,11 +14,11 @@ def lyapunov_three_operator_splitting(beta, gamma, mu, L, rho):
     fs = np.zeros(2)
 
     # Run algorithm
-    # y1 = J_{gamma A} (2 x1 - w0 - g1)
-    x1 = y1 + gamma * Ay1 + gamma * Bx1 + gx1
+    # y1 = J_{alpha A} (2 x1 - w0 - g1)
+    x1 = y1 + alpha * Ay1 + alpha * Bx1 + gamma * gx1
 
-    # x1 = J_{gamma B} (w0)
-    w0 = x1 + gamma * Bx1
+    # x1 = J_{alpha B} (w0)
+    w0 = x1 + alpha * Bx1
 
     # w1 = w0 - beta (x1 - y1)
     w1 = w0 - beta * (x1 - y1)
