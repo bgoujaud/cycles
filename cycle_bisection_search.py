@@ -26,7 +26,7 @@ def cycle_bisection_search(method, mu, L, nb_points, precision, cycle_length):
         cycle_length (int): the length of the searched cycle
 
     """
-    betas = np.linspace(0, 1, nb_points, endpoint=False)[1:]
+    betas = np.linspace(0, 1, nb_points + 1, endpoint=False)[1:]
     gammas_min_cycle = np.zeros_like(betas)
     if method == "HB":
         gammas_max_cycle = 2 * (1 + betas) / L
@@ -93,7 +93,7 @@ if __name__ == "__main__":
     Parallel(n_jobs=-1)(delayed(cycle_bisection_search)(method=methods[i],
                                                         mu=mus[i],
                                                         L=1,
-                                                        nb_points=500,
+                                                        nb_points=300,
                                                         precision=10 ** -4,
                                                         cycle_length=cycle_lengths[i],
                                                         ) for i in range(len(methods)))
