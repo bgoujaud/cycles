@@ -5,11 +5,11 @@ import numpy as np
 import cvxpy as cp
 
 from tools.file_management import write_result_file
-from heavy_ball.cycles import cycle_heavy_ball_momentum
-from nag.cycles import cycle_accelerated_gradient_strongly_convex
-from inexact_gradient_descent.cycles import cycle_inexact_gradient_descent
-from douglas_rachford.cycles import cycle_douglas_rachford_splitting
-from three_operator_splitting.cycles import cycle_three_operator_splitting
+from algorithms.heavy_ball.cycles import cycle_heavy_ball_momentum
+from algorithms.nag.cycles import cycle_accelerated_gradient_strongly_convex
+from algorithms.inexact_gradient_descent.cycles import cycle_inexact_gradient_descent
+from algorithms.douglas_rachford.cycles import cycle_douglas_rachford_splitting
+from algorithms.three_operator_splitting.cycles import cycle_three_operator_splitting
 
 
 def cycle_bisection_search(method, mu, L, nb_points, precision, cycle_length):

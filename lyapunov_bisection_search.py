@@ -5,11 +5,11 @@ from math import inf
 import numpy as np
 
 from tools.file_management import write_result_file
-from heavy_ball.lyapunov import lyapunov_heavy_ball_momentum
-from nag.lyapunov import lyapunov_accelerated_gradient_strongly_convex
-from inexact_gradient_descent.lyapunov import lyapunov_inexact_gradient_descent
-from douglas_rachford.lyapunov import lyapunov_douglas_rachford
-from three_operator_splitting.lyapunov import lyapunov_three_operator_splitting
+from algorithms.heavy_ball.lyapunov import lyapunov_heavy_ball_momentum
+from algorithms.nag.lyapunov import lyapunov_accelerated_gradient_strongly_convex
+from algorithms.inexact_gradient_descent.lyapunov import lyapunov_inexact_gradient_descent
+from algorithms.douglas_rachford.lyapunov import lyapunov_douglas_rachford
+from algorithms.three_operator_splitting.lyapunov import lyapunov_three_operator_splitting
 
 
 def lyapunov_bisection_search(method, mu, L, nb_points, precision, rho=1):
