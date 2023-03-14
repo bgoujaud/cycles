@@ -22,41 +22,41 @@ def cycle_bisection_search(method, mu, L, nb_points, precision, cycle_length):
         mu (float): strong convexity parameter
         L (float): smoothness parameter
         nb_points (int): number of bisection search performed (1 per beta value)
-        precision (float): maximal absolute error accepted on alpha
+        precision (float): maximal absolute error accepted on gamma
         cycle_length (int): the length of the searched cycle
 
     """
     betas = np.linspace(0, 1, nb_points, endpoint=False)[1:]
-    alphas_min_cycle = np.zeros_like(betas)
+    gammas_min_cycle = np.zeros_like(betas)
     if method == "HB":
-        alphas_max_cycle = 2 * (1 + betas) / L
+        gammas_max_cycle = 2 * (1 + betas) / L
         cycle_search = cycle_heavy_ball_momentum
     elif method == "NAG":
-        alphas_max_cycle = (1 + 1 / (1 + betas)) / L
+        gammas_max_cycle = (1 + 1 / (1 + betas)) / L
         cycle_search = cycle_accelerated_gradient_strongly_convex
     elif method == "GD":
-        alphas_max_cycle = 2 * np.ones_like(betas) / L
+        gammas_max_cycle = 2 * np.ones_like(betas) / L
         cycle_search = cycle_inexact_gradient_descent
     elif method == "DR":
-        alphas_max_cycle = 2 * np.ones_like(betas) / L
+        gammas_max_cycle = 2 * np.ones_like(betas) / L
         cycle_search = cycle_douglas_rachford_splitting
     elif method == "TOS":
-        alphas_max_cycle = 2 * np.ones_like(betas) / L
+        gammas_max_cycle = 2 * np.ones_like(betas) / L
         cycle_search = cycle_three_operator_splitting
     else:
         raise ValueError
-    alphas_cycle = list()
+    gammas_cycle = list()
 
     for it in tqdm(range(len(betas))):
 
         beta = betas[it]
-        alpha_min_cycle = alphas_min_cycle[it]
-        alpha_max_cycle = alphas_max_cycle[it]
+        gamma_min_cycle = gammas_min_cycle[it]
+        gamma_max_cycle = gammas_max_cycle[it]
 
-        while alpha_max_cycle - alpha_min_cycle > precision:
-            alpha = (alpha_min_cycle + alpha_max_cycle) / 2
+        while gamma_max_cycle - gamma_min_cycle > precision:
+            gamma = (gamma_min_cycle + gamma_max_cycle) / 2
 
-            problem = cycle_search(mu=mu, L=L, alpha=alpha, beta=beta, n=cycle_length)
+            problem = cycle_search(mu=mu, L=L, gamma=gamma, beta=beta, n=cycle_length)
 
             # Solve the PEP
             # A small cycle metric means there is a cycle
@@ -67,14 +67,14 @@ def cycle_bisection_search(method, mu, L, nb_points, precision, cycle_length):
 
             # Update search interval
             if pepit_cycle_metric < 10 ** -3:
-                alpha_max_cycle = alpha
+                gamma_max_cycle = gamma
             else:
-                alpha_min_cycle = alpha
+                gamma_min_cycle = gamma
 
-        alphas_cycle.append(alpha_max_cycle)
+        gammas_cycle.append(gamma_max_cycle)
 
     write_result_file(file_path="results/cycles/{}_mu{:.2f}_L{:.0f}_K{:.0f}.txt".format(method, mu, L, cycle_length),
-                      alphas=alphas_cycle, betas=betas)
+                      gammas=gammas_cycle, betas=betas)
 
 
 if __name__ == "__main__":
@@ -83,7 +83,7 @@ if __name__ == "__main__":
     cycle_lengths = list()
     for method in ["HB", "NAG", "GD", "DR", "TOS"]:
         for mu in [0, .01, .1, .2]:
-            for cycle_length in range(3, 25):
+            for cycle_length in range(3, 26):
                 methods.append(method)
                 mus.append(mu)
                 cycle_lengths.append(cycle_length)

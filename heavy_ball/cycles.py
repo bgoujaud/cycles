@@ -2,14 +2,14 @@ from PEPit import PEP
 from PEPit.functions import SmoothStronglyConvexFunction
 
 
-def cycle_heavy_ball_momentum(mu, L, alpha, beta, n):
+def cycle_heavy_ball_momentum(mu, L, gamma, beta, n):
     """
     Verify existence or not of cycle on heavy ball method.
 
     Args:
         mu (float): strong convexity parameter
         L (float): smoothness parameter
-        alpha (float): step-size
+        gamma (float): step-size
         beta (float): momentum parameter
         n (float): number of steps / length of searched cycle
 
@@ -37,7 +37,7 @@ def cycle_heavy_ball_momentum(mu, L, alpha, beta, n):
     x_old = x0
 
     for _ in range(n):
-        x_next = x_new - alpha * func.gradient(x_new) + beta * (x_new - x_old)
+        x_next = x_new - gamma * func.gradient(x_new) + beta * (x_new - x_old)
         x_old = x_new
         x_new = x_next
 

@@ -26,7 +26,7 @@ def run_all(list_algos, nb_points, precision, max_cycle_length):
     cycle_lengths = list()
     for method in list_algos:
         for mu in [0, .01, .1, .2]:
-            for cycle_length in range(3, max_cycle_length):
+            for cycle_length in range(3, max_cycle_length + 1):
                 methods.append(method)
                 mus.append(mu)
                 cycle_lengths.append(cycle_length)

@@ -2,14 +2,14 @@ from PEPit import PEP
 from PEPit.functions import SmoothStronglyConvexFunction
 
 
-def cycle_accelerated_gradient_strongly_convex(mu, L, alpha, beta, n):
+def cycle_accelerated_gradient_strongly_convex(mu, L, gamma, beta, n):
     """
     Verify existence or not of cycle on fast gradient method.
 
     Args:
         mu (float): strong convexity parameter
         L (float): smoothness parameter
-        alpha (float): step-size
+        gamma (float): step-size
         beta (float): momentum parameter
         n (float): number of steps / length of searched cycle
 
@@ -36,7 +36,7 @@ def cycle_accelerated_gradient_strongly_convex(mu, L, alpha, beta, n):
     y = x_new + beta * (x_new - x_old)
     for i in range(n):
         x_old = x_new
-        x_new = y - alpha * func.gradient(y)
+        x_new = y - gamma * func.gradient(y)
         y = x_new + beta * (x_new - x_old)
 
     # Set the performance metric to the function value accuracy

@@ -3,14 +3,14 @@ from PEPit.functions import SmoothStronglyConvexFunction
 from PEPit.primitive_steps import inexact_gradient_step
 
 
-def cycle_inexact_gradient_descent(L, mu, alpha, beta, n):
+def cycle_inexact_gradient_descent(L, mu, gamma, beta, n):
     """
     Verify existence or not of cycle on inexact gradient descent.
 
     Args:
         mu (float): strong convexity parameter
         L (float): smoothness parameter
-        alpha (float): step-size
+        gamma (float): step-size
         beta (float): oracle relative error
         n (float): number of steps / length of searched cycle
 
@@ -20,7 +20,7 @@ def cycle_inexact_gradient_descent(L, mu, alpha, beta, n):
 
     # gamma is alpha
     # epsilon is beta
-    gamma = alpha
+    gamma = gamma
     epsilon = beta
 
     # Instantiate PEP

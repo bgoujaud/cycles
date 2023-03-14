@@ -25,22 +25,22 @@ def read_result_file(file_path):
     with open(file_path) as f:
         lines = f.readlines()[1:]
 
-    alphas = list()
+    gammas = list()
     betas = list()
 
     for line in lines:
-        alpha, beta = line.split("\t")[:2]
-        alphas.append(float(alpha))
+        gamma, beta = line.split("\t")[:2]
+        gammas.append(float(gamma))
         betas.append(float(beta))
 
-    return alphas, betas
+    return gammas, betas
 
 
-def write_result_file(file_path, alphas, betas):
+def write_result_file(file_path, gammas, betas):
     with open(file_path, "w") as f:
-        f.write("alpha\tbeta\n")
-        for alpha, beta in zip(alphas, betas):
-            f.write("{}\t{}\n".format(alpha, beta))
+        f.write("gamma\tbeta\n")
+        for gamma, beta in zip(gammas, betas):
+            f.write("{}\t{}\n".format(gamma, beta))
 
 
 def bound(method, L, beta):
@@ -61,24 +61,24 @@ def bound(method, L, beta):
 def get_colored_graphics(method, mu, L, max_cycle_length, folder="results/"):
     plt.figure(figsize=(15, 9))
 
-    alphas_lyap, betas_lyap = read_result_file(file_path=folder + "lyapunov/{}_mu{:.2f}_L{:.0f}.txt".format(method, mu, L))
+    gammas_lyap, betas_lyap = read_result_file(file_path=folder + "lyapunov/{}_mu{:.2f}_L{:.0f}.txt".format(method, mu, L))
     x_green = list()
     y_green = list()
-    for alpha_max, beta in zip(alphas_lyap, betas_lyap):
-        x_green += list(np.linspace(0, alpha_max, 500))
+    for gamma_max, beta in zip(gammas_lyap, betas_lyap):
+        x_green += list(np.linspace(0, gamma_max, 500))
         y_green += [beta] * 500
     plt.plot(x_green, y_green, '.', color="yellowgreen")
 
     color_map = plt.get_cmap('OrRd')
     for K in range(max_cycle_length, 2, -1):
         try:
-            alphas_cycle, betas_cycle = read_result_file(
+            gammas_cycle, betas_cycle = read_result_file(
                 file_path=folder + "cycles/{}_mu{:.2f}_L{:.0f}_K{:.0f}.txt".format(method, mu, L, K))
             x_red = list()
             y_red = list()
-            for alpha_min, beta in zip(alphas_cycle, betas_cycle):
-                if alpha_min <= bound(method, L, beta):
-                    x_red += list(np.linspace(alpha_min, bound(method, L, beta), 500))
+            for gamma_min, beta in zip(gammas_cycle, betas_cycle):
+                if gamma_min <= bound(method, L, beta):
+                    x_red += list(np.linspace(gamma_min, bound(method, L, beta), 500))
                     y_red += [beta] * 500
             color_scale = (max_cycle_length + 1 - K) / (max_cycle_length - 1)
             color = color_map((2 + 3 * color_scale) / 5)
