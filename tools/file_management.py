@@ -23,7 +23,6 @@ import scienceplots
 plt.style.use('science')
 
 
-
 def read_result_file(file_path):
     with open(file_path) as f:
         lines = f.readlines()[1:]

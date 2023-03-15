@@ -28,7 +28,7 @@ def lyapunov_bisection_search(method, mu, L, nb_points, precision, rho=1):
         gammas_max_lyap = 2 * np.ones_like(betas) / L
         lyapunov_search = lyapunov_douglas_rachford
     elif method == "TOS":
-        gammas_max_lyap = 2 * np.ones_like(betas) / L
+        gammas_max_lyap = 2 / L / betas
         lyapunov_search = lyapunov_three_operator_splitting
     else:
         raise ValueError
