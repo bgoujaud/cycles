@@ -29,7 +29,7 @@ def cycle_three_operator_splitting(L, mu, gamma, beta, n, alpha=1):
     w = w1
     for i in range(n-1):
         x, _, _ = proximal_step(w, B, alpha)
-        y, _, _ = proximal_step(2 * x - w - C.gradient(x), A, alpha)
+        y, _, _ = proximal_step(2 * x - w - gamma * C.gradient(x), A, alpha)
         w = w - beta * (x - y)
 
     # Set the performance metric to the distance between z0 and z1
