@@ -52,12 +52,8 @@ def bound(method, L, beta):
         return (1 + 1 / (1 + 2 * beta)) / L
     elif method == "GD":
         return 2 / L
-    elif method == "DR":
-        # Set by default, not even clear that there is cycle in 2 / L
-        return 2 / L
     elif method == "TOS":
-        # Set by default, not even clear that there is cycle in 2 / L
-        return 2 / L / beta
+        return 2 / L
     else:
         raise Exception
 
@@ -75,7 +71,7 @@ def get_colored_graphics(method, mu, L, max_cycle_length, folder="results/"):
     legends = ["convergence"]
 
     color_map = plt.get_cmap('OrRd')
-    for K in range(max_cycle_length, 2, -1):
+    for K in range(max_cycle_length, 1, -1):
         try:
             gammas_cycle, betas_cycle = read_result_file(
                 file_path=folder + "cycles/{}_mu{:.2f}_L{:.0f}_K{:.0f}.txt".format(method, mu, L, K))

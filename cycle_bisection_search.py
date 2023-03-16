@@ -4,11 +4,10 @@ from joblib import Parallel, delayed
 import numpy as np
 import cvxpy as cp
 
-from tools.file_management import write_result_file
+from tools.file_management import bound, write_result_file
 from algorithms.heavy_ball.cycles import cycle_heavy_ball_momentum
 from algorithms.nag.cycles import cycle_accelerated_gradient_strongly_convex
 from algorithms.inexact_gradient_descent.cycles import cycle_inexact_gradient_descent
-from algorithms.douglas_rachford.cycles import cycle_douglas_rachford_splitting
 from algorithms.three_operator_splitting.cycles import cycle_three_operator_splitting
 
 
@@ -28,22 +27,14 @@ def cycle_bisection_search(method, mu, L, nb_points, precision, cycle_length):
     """
     betas = np.linspace(0, 1, nb_points + 1, endpoint=False)[1:]
     gammas_min_cycle = np.zeros_like(betas)
+    gammas_max_cycle = [bound(method=method, L=L, beta=beta) for beta in betas]
     if method == "HB":
-        gammas_max_cycle = 2 * (1 + betas) / L
         cycle_search = cycle_heavy_ball_momentum
     elif method == "NAG":
-        gammas_max_cycle = (1 + 1 / (1 + betas)) / L
         cycle_search = cycle_accelerated_gradient_strongly_convex
     elif method == "GD":
-        gammas_max_cycle = 2 * np.ones_like(betas) / L
         cycle_search = cycle_inexact_gradient_descent
-    elif method == "DR":
-        # Here we set a gamma by default, but it is not even clear that there is cycles in 2/L
-        gammas_max_cycle = 2 * np.ones_like(betas) / L
-        cycle_search = cycle_douglas_rachford_splitting
     elif method == "TOS":
-        # Here we set a gamma by default, but it is not even clear that there is cycles in 2/L
-        gammas_max_cycle = 2 / L / betas
         cycle_search = cycle_three_operator_splitting
     else:
         raise ValueError
@@ -81,17 +72,14 @@ def cycle_bisection_search(method, mu, L, nb_points, precision, cycle_length):
 
 if __name__ == "__main__":
     methods = list()
-    mus = list()
     cycle_lengths = list()
     for method in ["HB", "NAG", "GD", "TOS"]:
-        for mu in [0, .01, .1]:
-            for cycle_length in range(3, 25 + 1):
-                methods.append(method)
-                mus.append(mu)
-                cycle_lengths.append(cycle_length)
+        for cycle_length in range(2, 15 + 1):
+            methods.append(method)
+            cycle_lengths.append(cycle_length)
 
     Parallel(n_jobs=-1)(delayed(cycle_bisection_search)(method=methods[i],
-                                                        mu=mus[i],
+                                                        mu=0,
                                                         L=1,
                                                         nb_points=300,
                                                         precision=10 ** -4,

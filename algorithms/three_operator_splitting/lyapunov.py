@@ -15,7 +15,7 @@ def lyapunov_three_operator_splitting(beta, gamma, mu, L, rho, alpha=1):
 
     # Run algorithm
     # y1 = J_{alpha A} (2 x1 - w0 - g1)
-    x1 = y1 + alpha * Ay1 + alpha * Bx1 + gamma * gx1
+    x1 = y1 + alpha * Ay1 + alpha * Bx1 + gamma / beta * gx1
 
     # x1 = J_{alpha B} (w0)
     w0 = x1 + alpha * Bx1
