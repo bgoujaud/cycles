@@ -105,7 +105,7 @@ def get_colored_graphics(method, mu, L, max_cycle_length, folder="results/"):
 
 if __name__ == "__main__":
     for method in ["HB", "NAG", "GD", "TOS"]:
-        for mu in [0., .01, .1]:
+        for mu in [0]:
             try:
                 get_colored_graphics(method=method, mu=mu, L=1, max_cycle_length=25, folder="../results/")
             except FileNotFoundError:
