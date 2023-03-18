@@ -59,6 +59,12 @@ def bound(method, L, beta):
 
 def get_colored_graphics(method, mu, L, max_cycle_length, folder="results/"):
     fig = plt.figure(figsize=(15, 9))
+    plt.xlabel(r"$\gamma$")
+    if method == "GD":
+        plt.ylabel(r"$\varepsilon$", rotation=0, labelpad=10)
+    else:
+        plt.ylabel(r"$\beta$", rotation=0, labelpad=10)
+
     ax = plt.subplot(111)
 
     if method == "HB":
