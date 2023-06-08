@@ -53,9 +53,9 @@ def lyapunov_bisection_search(method, mu, L, nb_points, precision, rho=1):
 if __name__ == "__main__":
 
     Parallel(n_jobs=-1)(delayed(lyapunov_bisection_search)(method=method,
-                                                           mu=0,
+                                                           mu=0.1,
                                                            L=1,
                                                            nb_points=300,
                                                            precision=10 ** -4,
                                                            rho=1,
-                                                           ) for method in ["HB", "NAG", "GD", "TOS"])
+                                                           ) for method in ["HB"])

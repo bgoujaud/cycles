@@ -57,7 +57,7 @@ def bound(method, L, beta):
         raise Exception
 
 
-def get_colored_graphics(method, mu, L, max_cycle_length, folder="results/"):
+def get_colored_graphics(method, mu, L, max_cycle_length, add_background=True, add_lyapunov=True, inplot=True, folder="results/"):
     fig = plt.figure(figsize=(15, 9))
     plt.xlabel(r"$\gamma$")
     if method == "GD":
@@ -67,24 +67,47 @@ def get_colored_graphics(method, mu, L, max_cycle_length, folder="results/"):
 
     ax = plt.subplot(111)
 
-    if method == "HB":
+    if method == "HB" and inplot:
         axins = zoomed_inset_axes(ax, zoom=3.5, loc="lower right")
 
+    # Background
+    x_grey = list()
+    y_grey = list()
+    if method == "TOS":
+        betas = np.linspace(0, 2, 300 + 1, endpoint=False)[1:]
+    else:
+        betas = np.linspace(0, 1, 300 + 1, endpoint=False)[1:]
+    for beta in betas:
+        x_grey += list(np.linspace(0, bound(method=method, L=L, beta=beta), 500))
+        y_grey += [beta] * 500
+    if add_background:
+        ax.plot(x_grey, y_grey, '.', color="gainsboro", label="no conclusion")
+
+    if method == "HB" and inplot:
+        axins.plot(x_grey, y_grey, ".", color="gainsboro")
+
+    legends = ["no conclusion"]
+    colors = ["gainsboro"]
+
+    # Lyapunov
     gammas_lyap, betas_lyap = read_result_file(
         file_path=folder + "lyapunov/{}_mu{:.2f}_L{:.0f}.txt".format(method, mu, L))
     x_green = list()
     y_green = list()
     for gamma_max, beta in zip(gammas_lyap, betas_lyap):
-        x_green += list(np.linspace(0, gamma_max, 500))
-        y_green += [beta] * 500
-    ax.plot(x_green, y_green, '.', color="yellowgreen", label="convergence")
+        if gamma_max > .01:
+            x_green += list(np.linspace(0, gamma_max, 500))
+            y_green += [beta] * 500
+    if add_lyapunov:
+        ax.plot(x_green, y_green, '.', color="yellowgreen", label="convergence")
 
-    if method == "HB":
+    if method == "HB" and inplot:
         axins.plot(x_green, y_green, ".", color="yellowgreen")
 
-    legends = ["convergence"]
-    colors = ["yellowgreen"]
+    legends.append("convergence")
+    colors.append("yellowgreen")
 
+    # Cycles
     color_map = plt.get_cmap('YlOrRd')
     for K in range(max_cycle_length, 1, -1):
         try:
@@ -100,13 +123,13 @@ def get_colored_graphics(method, mu, L, max_cycle_length, folder="results/"):
             color = color_map(color_scale)
 
             ax.plot(x_red, y_red, '.', color=color, label="cycle of length {}".format(K))
-            if method == "HB":
+            if method == "HB" and inplot:
                 axins.plot(x_red, y_red, ".", color=color)
             legends.append("cycle of length {}".format(K))
             colors.append(color)
         except FileNotFoundError:
             pass
-    if method == "HB":
+    if method == "HB" and inplot:
         x1 = -0.01
         x2 = 0.25
         y1 = 0.95
@@ -118,16 +141,23 @@ def get_colored_graphics(method, mu, L, max_cycle_length, folder="results/"):
         mark_inset(ax, axins, loc1=1, loc2=2, fc="none", ec="0.7")
         ax.plot([x1, x1, x2, x2, x1], [y1, y2, y2, y1, y1], linewidth=0.6, color="grey")
 
-    bounds = list(range(len(colors[1:])))
-    norm = mpl.colors.BoundaryNorm(np.array(bounds) + 2, len(colors[1:]))
-    position = fig.add_axes([0.28, 0.92, 0.6, 0.02])  # [x_init, y_init, width, height]
-    clbar = fig.colorbar(cm.ScalarMappable(norm=norm, cmap=mpl.colors.ListedColormap(colors[1:][::-1])),
+    bounds = list(range(len(colors[2:])))
+    norm = mpl.colors.BoundaryNorm(np.array(bounds) + 2, len(colors[2:]))
+    position = fig.add_axes([0.42, 0.92, 0.46, 0.02])  # [x_init, y_init, width, height]
+    clbar = fig.colorbar(cm.ScalarMappable(norm=norm, cmap=mpl.colors.ListedColormap(colors[2:][::-1])),
                          cax=position, orientation="horizontal", shrink=0.8, fraction=0.1, aspect=50)
     clbar.ax.set_title("Length of the shortest cycle")
+
+    handles = [mlines.Line2D([], [], color=colors[1], marker="s",
+                             linestyle="None", markersize=12, markeredgecolor="black")]
+    labels = [""]
+    fig.legend(handles, labels, bbox_to_anchor=(0.37, 1), title_fontsize=20, title="Convergence", frameon=False)
+
     handles = [mlines.Line2D([], [], color=colors[0], marker="s",
                              linestyle="None", markersize=12, markeredgecolor="black")]
     labels = [""]
-    fig.legend(handles, labels, bbox_to_anchor=(0.25, 1), title_fontsize=20, title="Convergence", frameon=False)
+    fig.legend(handles, labels, bbox_to_anchor=(0.25, 1), title_fontsize=20, title="No conclusion", frameon=False)
+
     plt.savefig(folder + "figures/{}_mu{:.2f}_L{:.0f}_colored.png".format(method, mu, L), bbox_inches="tight")
 
 
